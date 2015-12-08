@@ -3,6 +3,7 @@ package com.netapp.scotch;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +20,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -25,6 +38,7 @@ import android.widget.TextView;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    private String TAG = "LoginActivity";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -41,8 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mUsernameView = (EditText) findViewById(R.id.email);
-        populateAutoComplete();
+        mUsernameView = (EditText) findViewById(R.id.username);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -67,11 +80,6 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
-
-    private void populateAutoComplete() {
-        getLoaderManager().initLoader(0, null, this);
-    }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -205,6 +213,61 @@ public class LoginActivity extends AppCompatActivity {
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    protected void sendJson(final String username, final String password) {
+
+        JSONObject credentials = new JSONObject();
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String url = "http://10.74.213.227:8080/api/authenticate";
+
+        try {
+            credentials.put("username", username);
+            credentials.put("password", password);
+        } catch (JSONException e) {
+            Log.e(TAG, e.toString());
+        }
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest
+                (Request.Method.POST, url, credentials, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        // the response is already constructed as a JSONObject!
+                        try {
+                            JSONObject err = response.getJSONObject("err");
+
+                            String errMsg = response.getString("errMsg");
+                            Integer errNo = response.getInt("errNo");
+
+                            Log.d(TAG, "errMsg: " + errMsg + "\n errNo: " + errNo);
+
+                            if(errNo ==  0) {
+                                String token = response.getString("token");
+
+                                Context context = getApplicationContext();
+                                CharSequence text = token.toString();
+                                int duration = Toast.LENGTH_SHORT;
+
+                                Toast toast = Toast.makeText(context, text, duration);
+                                toast.show();
+                            }
+
+                        } catch (JSONException e) {
+                            Log.e(TAG, e.toString());
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, error.toString());
+                    }
+                });
+
+        requestQueue.add(jsonRequest);
     }
 }
 
