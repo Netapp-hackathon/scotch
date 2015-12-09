@@ -12,5 +12,10 @@
             android:singleLine="true"
             android:title="@string/pref_title_cloud_server_endpoint" />
 
+        <com.netapp.scotch.ClearTokenPreference
+            android:key="clear_token"
+            android:title="Clear token?"
+            android:dialogTitle="Clear token?" />
+
     </PreferenceCategory>
 </PreferenceScreen>
