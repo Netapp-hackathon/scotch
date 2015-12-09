@@ -1,11 +1,14 @@
 package com.netapp.scotch;
 
+import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -15,7 +18,10 @@ import java.util.List;
 
 public class OpListAdapter extends RecyclerView.Adapter<OpListAdapter.OpViewHolder> {
 
+    final private static String TAG = "OpListAdapter";
     List<Op> ops;
+
+    //private final View.OnClickListener mOnClickListener = new MyOnClickListener();
 
     OpListAdapter(List<Op> ops) {
         this.ops = ops;
@@ -40,14 +46,25 @@ public class OpListAdapter extends RecyclerView.Adapter<OpListAdapter.OpViewHold
     public OpViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.op_list_item, parent, false);
         OpViewHolder opViewHolder = new OpViewHolder(v);
+        //v.setOnClickListener(mOnClickListener);
         return opViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(OpViewHolder holder, int position) {
+    public void onBindViewHolder(OpViewHolder holder, final int position) {
+        Log.d(TAG, "onBindViewHolder" + 1);
         holder.opName.setText(ops.get(position).opName);
         holder.opDescription.setText(ops.get(position).opDescription);
         holder.opId.setText(String.valueOf(ops.get(position).opId));
+
+        holder.opListItem.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick (View V){
+                Log.d("asd", "" + position);
+                Toast.makeText(V.getContext(), "Item Clicked at poition " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
