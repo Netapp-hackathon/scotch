@@ -20,7 +20,9 @@ public class OpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_op);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.op_activity_toolbar);
+        toolbar.setTitle("Choose your Op!");
         setSupportActionBar(toolbar);
+
 
         TextView textView = (TextView) findViewById(R.id.token_text);
         Intent i = getIntent();
