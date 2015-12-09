@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
 
             JSONObject credentials = new JSONObject();
             RequestQueue requestQueue = Volley.newRequestQueue(this);
-            String url = "http://10.74.209.8:8080/api/authenticate";
+            String url = "http://192.168.1.103:8080/api/authenticate";
 
             try {
                 credentials.put("username", username);
