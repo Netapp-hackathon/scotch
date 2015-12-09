@@ -24,10 +24,11 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="com.netapp.scotch.OpActivity">
 
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/token_text"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/op_list"
+            android:scrollbars="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"/>
 
     </RelativeLayout>
 

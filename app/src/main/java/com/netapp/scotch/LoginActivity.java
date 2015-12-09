@@ -34,6 +34,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.netapp.scotch.Utils.getEndpoint;
+
 
 /**
  * A login screen that offers login via email/password.
@@ -158,11 +160,10 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(true);
 
             final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String endPoint = sharedPreferences.getString("cloud_server_endpoint", "0.0.0.0:0000");
 
             JSONObject credentials = new JSONObject();
             RequestQueue requestQueue = Volley.newRequestQueue(this);
-            String url = "http://" + endPoint + "/api/authenticate";
+            String url = "http://" + getEndpoint(this) + "/api/authenticate";
             Log.d(TAG, url);
 
             try {
@@ -192,6 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(i);
                                 } else {
                                     Toast t = Toast.makeText(getBaseContext(), errMsg, Toast.LENGTH_LONG);
+                                    sharedPreferences.edit().putString("authToken", "").commit();
                                     t.show();
                                     showProgress(false);
                                 }
