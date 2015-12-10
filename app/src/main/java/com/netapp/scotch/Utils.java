@@ -19,4 +19,9 @@ public class Utils {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getString("authToken", "");
     }
+
+    public static class constant {
+        final public static Integer PASSED = 0;
+        final public static Integer IN_PROGRSS = 1;
+    }
 }

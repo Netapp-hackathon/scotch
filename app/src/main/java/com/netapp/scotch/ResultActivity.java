@@ -2,13 +2,8 @@ package com.netapp.scotch;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,11 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -37,40 +29,54 @@ import java.util.List;
 import static com.netapp.scotch.Utils.getEndpoint;
 import static com.netapp.scotch.Utils.getToken;
 
-public class OpActivity extends AppCompatActivity {
+/**
+ * Created by jay3 on 12/10/2015.
+ */
 
-    private final String TAG = "OpActivity";
+public class ResultActivity extends AppCompatActivity {
 
-    ArrayList<Op> ops = new ArrayList<Op>();
+    private final String TAG = "ResultActivity";
 
-    private RecyclerView mOpList;
-    private OpListAdapter mOpListAdapter;
+    ArrayList<Result> results = new ArrayList<Result>();
+
+    private RecyclerView mResultList;
+    private ResultListAdapter mResultListAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
-    public static DatabaseHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_op);
+        setContentView(R.layout.activity_result);
 
-        db = new DatabaseHandler(this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.op_activity_toolbar);
-        toolbar.setTitle("Choose your Op!");
+        Toolbar toolbar = (Toolbar) findViewById(R.id.result_activity_toolbar);
+        toolbar.setTitle("Results!");
         setSupportActionBar(toolbar);
 
-        mOpList = (RecyclerView) findViewById(R.id.op_list);
-        mOpList.setHasFixedSize(true);
+        mResultList = (RecyclerView) findViewById(R.id.result_list);
+        mResultList.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
-        mOpList.setLayoutManager(mLayoutManager);
-
+        mResultList.setLayoutManager(mLayoutManager);
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
 
-        String url = "http://" + getEndpoint(this) + "/api/ops?token=" + getToken(this);
+        // Reading all ops
+        Log.d(TAG, "Reading all ops..");
+        List<OpExtended> ops = OpActivity.db.getAllOps();
+
+        for (OpExtended op : ops) {
+            Log.d(TAG, op.toString());
+            Result res = new Result(op.getopName(), op.getresult(), op.getCreated(), op.getopId());
+            results.add(res);
+            Log.d(TAG, res.toString());
+        }
+
+        mResultListAdapter = new ResultListAdapter(results);
+        mResultList.setAdapter(mResultListAdapter);
+        progressDialog.hide();
+
+        /*String url = "http://" + getEndpoint(this) + "/api/vsims?token=" + getToken(this);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonRequest = new JsonObjectRequest
                 (url, new Response.Listener<JSONObject>() {
@@ -84,18 +90,18 @@ public class OpActivity extends AppCompatActivity {
                             Integer errNo = err.getInt("errNo");
 
                             if(errNo == 0) {
-                                JSONArray jsonOpArray = response.getJSONArray("ops");
-                                if (jsonOpArray != null) {
-                                    int length = jsonOpArray.length();
+                                JSONArray jsonVsimArray = response.getJSONArray("vsims");
+                                if (jsonVsimArray != null) {
+                                    int length = jsonVsimArray.length();
                                     for (int i = 0; i < length; i++) {
-                                        JSONObject jsonOp = jsonOpArray.getJSONObject(i);
-                                        Op op = new Op(jsonOp.getString("opName"), jsonOp.getString("opDescr"), jsonOp.getInt("opId"));
-                                        Log.d(TAG, op.toString());
-                                        ops.add(op);
+                                        JSONObject jsonVsim = jsonVsimArray.getJSONObject(i);
+                                        Vsim vsim = new Vsim(jsonVsim.getString("vsimName"), jsonVsim.getInt("vsimId"));
+                                        Log.d(TAG, vsim.toString());
+                                        vsims.add(vsim);
                                     }
-                                    Log.d(TAG, "Got " + ops.size() + " ops!");
-                                    mOpListAdapter = new OpListAdapter(ops);
-                                    mOpList.setAdapter(mOpListAdapter);
+                                    Log.d(TAG, "Got " + vsims.size() + " vsims!");
+                                    mVsimListAdapter = new VsimListAdapter(vsims);
+                                    mVsimList.setAdapter(mVsimListAdapter);
                                     progressDialog.hide();
                                 }
                             } else {
@@ -115,7 +121,7 @@ public class OpActivity extends AppCompatActivity {
                         error.printStackTrace();
                     }
                 });
-        requestQueue.add(jsonRequest);
+        requestQueue.add(jsonRequest);*/
     }
 
     @Override

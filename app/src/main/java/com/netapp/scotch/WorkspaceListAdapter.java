@@ -76,7 +76,7 @@ public class WorkspaceListAdapter extends RecyclerView.Adapter<WorkspaceListAdap
                 final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(v.getContext());
 
                 Intent i = ((Activity) v.getContext()).getIntent();
-                String opName = i.getStringExtra("opName");
+                final String opName = i.getStringExtra("opName");
                 final int opId = i.getIntExtra("opId", 0);
                 String workspaceName = ((TextView) v.findViewById(R.id.workspace_name)).getText().toString();
                 final int workspaceId = Integer.parseInt(((TextView) v.findViewById(R.id.workspace_id)).getText().toString());
@@ -111,6 +111,15 @@ public class WorkspaceListAdapter extends RecyclerView.Adapter<WorkspaceListAdap
                                                 Toast t = Toast.makeText(v.getContext(), "Op submitted successfully!", Toast.LENGTH_LONG);
                                                 t.show();
                                                 sharedPreferences.edit().putString("opSubmitted", String.valueOf(response.getString("eId"))).commit();
+
+                                                Log.d(TAG, "Inserting in db");
+                                                OpActivity.db.addOp(new OpExtended(opId, opName,
+                                                        Integer.parseInt(String.valueOf(response.getString("eId"))),
+                                                        Utils.constant.IN_PROGRSS));
+
+                                                Intent i = new Intent(v.getContext(), ResultActivity.class);
+                                                v.getContext().startActivity(i);
+
                                             } else {
                                                 Toast t = Toast.makeText(v.getContext(), errMsg, Toast.LENGTH_LONG);
                                                 t.show();

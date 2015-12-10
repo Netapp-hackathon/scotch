@@ -52,9 +52,9 @@ public class OpListAdapter extends RecyclerView.Adapter<OpListAdapter.OpViewHold
     @Override
     public void onBindViewHolder(final OpViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder" + 1);
-        holder.opName.setText(ops.get(position).opName);
-        holder.opDescription.setText(ops.get(position).opDescription);
-        holder.opId.setText(String.valueOf(ops.get(position).opId));
+        holder.opName.setText(ops.get(position).mOpName);
+        holder.opDescription.setText(ops.get(position).mOpDescription);
+        holder.opId.setText(String.valueOf(ops.get(position).mOpId));
 
         holder.opListItem.setOnClickListener(new View.OnClickListener() {
 
