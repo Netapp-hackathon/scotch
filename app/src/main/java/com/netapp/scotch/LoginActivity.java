@@ -3,6 +3,7 @@ package com.netapp.scotch;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -43,6 +44,7 @@ import static com.netapp.scotch.Utils.getEndpoint;
 public class LoginActivity extends AppCompatActivity {
 
     private String TAG = "LoginActivity";
+    static ProgressDialog progressDialog;
 
     // UI references.
     private EditText mUsernameView;
@@ -64,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        progressDialog = new ProgressDialog(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.login_activity_toolbar);
         toolbar.setTitle("Scotch!");
@@ -164,7 +168,6 @@ public class LoginActivity extends AppCompatActivity {
             JSONObject credentials = new JSONObject();
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             String url = "http://" + getEndpoint(this) + "/api/authenticate";
-            Log.d(TAG, url);
 
             try {
                 credentials.put("username", username);
@@ -191,6 +194,7 @@ public class LoginActivity extends AppCompatActivity {
                                     sharedPreferences.edit().putString("authToken", token).commit();
                                     Intent i = new Intent(getBaseContext(), OpActivity.class);
                                     startActivity(i);
+                                    finish();
                                 } else {
                                     Toast t = Toast.makeText(getBaseContext(), errMsg, Toast.LENGTH_LONG);
                                     sharedPreferences.edit().putString("authToken", "").commit();
@@ -207,6 +211,10 @@ public class LoginActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
                             Log.e(TAG, error.toString());
                             error.printStackTrace();
+                            Toast t = Toast.makeText(getBaseContext(), "Network problem, try again later!", Toast.LENGTH_LONG);
+                            t.show();
+                            sharedPreferences.edit().putString("authToken", "").commit();
+                            showProgress(false);
                         }
                     });
             requestQueue.add(jsonRequest);
@@ -216,36 +224,16 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        if (show) {
+            progressDialog.setMessage("Logging in...");
+            progressDialog.setCancelable(false);
+            progressDialog.setIndeterminate(true);
+            progressDialog.show();
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            progressDialog.dismiss();
         }
     }
 }

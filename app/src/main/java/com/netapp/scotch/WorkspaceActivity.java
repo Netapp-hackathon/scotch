@@ -57,7 +57,7 @@ public class WorkspaceActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading...");
         progressDialog.show();
 
-        String url = "http://" + getEndpoint(this) + "/api/workspaces?token=" + getToken(this);
+        String url = "http://" + getEndpoint(this) + "/api/ws?token=" + getToken(this);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonRequest = new JsonObjectRequest
                 (url, new Response.Listener<JSONObject>() {
@@ -66,17 +66,17 @@ public class WorkspaceActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         // the response is already constructed as a JSONObject!
                         try {
-                            JSONObject err = response.getJSONObject("err");
-                            String errMsg = err.getString("errMsg");
-                            Integer errNo = err.getInt("errNo");
+//                            JSONObject err = response.getJSONObject("err");
+//                            String errMsg = err.getString("errMsg");
+//                            Integer errNo = err.getInt("errNo");
 
-                            if(errNo == 0) {
-                                JSONArray jsonWorkspaceArray = response.getJSONArray("workspaces");
+                            if(true) {
+                                JSONArray jsonWorkspaceArray = response.getJSONArray("ws");
                                 if (jsonWorkspaceArray != null) {
                                     int length = jsonWorkspaceArray.length();
                                     for (int i = 0; i < length; i++) {
                                         JSONObject jsonWorkspace = jsonWorkspaceArray.getJSONObject(i);
-                                        Workspace workspace = new Workspace(jsonWorkspace.getString("workspaceName"), jsonWorkspace.getInt("workspaceId"));
+                                        Workspace workspace = new Workspace(jsonWorkspace.getString("wsName"), jsonWorkspace.getInt("wsId"));
                                         Log.d(TAG, workspace.toString());
                                         workspaces.add(workspace);
                                     }
@@ -87,7 +87,7 @@ public class WorkspaceActivity extends AppCompatActivity {
                                 }
                             } else {
                                 progressDialog.hide();
-                                Toast t = Toast.makeText(getBaseContext(), errMsg, Toast.LENGTH_LONG);
+                                Toast t = Toast.makeText(getBaseContext(), "Meh!"/* errMsg */, Toast.LENGTH_LONG);
                                 t.show();
                             }
                         } catch (JSONException e) {

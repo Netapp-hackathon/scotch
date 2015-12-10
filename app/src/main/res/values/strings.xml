@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">scotch</string>
+    <string name="app_name">Scotch</string>
 
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>

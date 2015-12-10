@@ -85,7 +85,7 @@ public class OpActivity extends AppCompatActivity {
                                     int length = jsonOpArray.length();
                                     for (int i = 0; i < length; i++) {
                                         JSONObject jsonOp = jsonOpArray.getJSONObject(i);
-                                        Op op = new Op(jsonOp.getString("opName"), jsonOp.getString("opDescription"), jsonOp.getInt("opId"));
+                                        Op op = new Op(jsonOp.getString("opName"), jsonOp.getString("opDescr"), jsonOp.getInt("opId"));
                                         Log.d(TAG, op.toString());
                                         ops.add(op);
                                     }

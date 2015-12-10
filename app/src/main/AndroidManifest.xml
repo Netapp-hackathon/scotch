@@ -25,6 +25,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".OpActivity" />
+        <activity android:name=".WorkspaceActivity" />
+        <activity android:name=".VsimActivity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"

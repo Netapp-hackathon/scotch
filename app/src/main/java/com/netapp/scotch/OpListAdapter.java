@@ -1,6 +1,6 @@
 package com.netapp.scotch;
 
-import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
+
 
 /**
  * Created by shivamk on 09-Dec-15.
@@ -46,23 +46,24 @@ public class OpListAdapter extends RecyclerView.Adapter<OpListAdapter.OpViewHold
     public OpViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.op_list_item, parent, false);
         OpViewHolder opViewHolder = new OpViewHolder(v);
-        //v.setOnClickListener(mOnClickListener);
         return opViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(OpViewHolder holder, final int position) {
+    public void onBindViewHolder(final OpViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder" + 1);
         holder.opName.setText(ops.get(position).opName);
         holder.opDescription.setText(ops.get(position).opDescription);
         holder.opId.setText(String.valueOf(ops.get(position).opId));
 
-        holder.opListItem.setOnClickListener(new View.OnClickListener(){
+        holder.opListItem.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick (View V){
-                Log.d("asd", "" + position);
-                Toast.makeText(V.getContext(), "Item Clicked at poition " + position, Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), WorkspaceActivity.class);
+                i.putExtra("opId", ((TextView) v.findViewById(R.id.op_id)).getText().toString());
+                i.putExtra("opName", ((TextView) v.findViewById(R.id.op_name)).getText().toString());
+                v.getContext().startActivity(i);
             }
         });
     }
