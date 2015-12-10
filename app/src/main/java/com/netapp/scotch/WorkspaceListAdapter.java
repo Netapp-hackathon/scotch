@@ -109,14 +109,15 @@ public class WorkspaceListAdapter extends RecyclerView.Adapter<WorkspaceListAdap
 
                                             if(errNo == 0) {
                                                 Toast t = Toast.makeText(v.getContext(), "Op submitted successfully!", Toast.LENGTH_LONG);
+                                                t.show();
                                                 sharedPreferences.edit().putString("opSubmitted", String.valueOf(response.getString("eId"))).commit();
                                             } else {
                                                 Toast t = Toast.makeText(v.getContext(), errMsg, Toast.LENGTH_LONG);
                                                 t.show();
-                                                Intent i = new Intent(v.getContext(), OpActivity.class);
-                                                v.getContext().startActivity(i);
-                                                ((Activity) v.getContext()).finish();
                                             }
+                                            Intent i = new Intent(v.getContext(), OpActivity.class);
+                                            v.getContext().startActivity(i);
+                                            ((Activity) v.getContext()).finish();
                                         } catch (JSONException e) {
                                             Log.e(TAG, e.toString());
                                             e.printStackTrace();

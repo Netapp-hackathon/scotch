@@ -61,7 +61,7 @@ public class OpListAdapter extends RecyclerView.Adapter<OpListAdapter.OpViewHold
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), WorkspaceActivity.class);
-                i.putExtra("opId", ((TextView) v.findViewById(R.id.op_id)).getText().toString());
+                i.putExtra("opId", Integer.parseInt(((TextView) v.findViewById(R.id.op_id)).getText().toString()));
                 i.putExtra("opName", ((TextView) v.findViewById(R.id.op_name)).getText().toString());
                 v.getContext().startActivity(i);
             }
